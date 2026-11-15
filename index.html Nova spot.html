@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NOVA SPOT: Earth Analog Screening Explorer</title>
+<meta name="description" content="Prototype for screening Earth environments as partial analogs for lunar and Martian field research.">
+<style>
+:root{--bg:#0a1428;--panel:#12234a;--panel2:#0e1c3b;--line:#2a4070;--cyan:#22c3d6;--gold:#d4af37;--text:#fff;--mute:#9fb3ce;--ice:#e6eef8}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+header,main,footer{max-width:1040px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+.eyebrow{color:var(--gold);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+h1{margin:6px 0 4px;font-size:clamp(34px,9vw,56px);line-height:1.05;letter-spacing:.02em}
+h1 span{display:block;color:var(--cyan);font-size:.42em;font-weight:500;letter-spacing:0;margin-top:6px}
+h2{font-size:22px;margin:0 0 8px}
+h3{font-size:16px;margin:0 0 4px;color:var(--gold)}
+p{margin:0 0 10px;color:var(--ice)}
+section{margin-top:32px}
+.notice{border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-top:18px;color:var(--gold);font-size:14px;background:rgba(212,175,55,.06)}
+.notice b{color:var(--gold)}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+button,select{font:inherit;color:var(--text);min-height:44px}
+.chip{background:transparent;border:1px solid var(--line);border-radius:999px;padding:0 16px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--cyan);border-color:var(--cyan);color:#0a1428;font-weight:700}
+.btn{background:var(--cyan);color:#0a1428;border:0;border-radius:10px;padding:0 16px;font-weight:700;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--cyan);border:1px solid var(--cyan)}
+select{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:0 10px}
+label.chk{display:flex;gap:8px;align-items:center;min-height:44px;color:var(--ice);font-size:14px}
+label.chk input{width:20px;height:20px;accent-color:#22c3d6}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.grow{flex:1 1 auto}
+.count{color:var(--mute);font-size:14px}
+.grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.card h3{color:var(--text);font-size:18px}
+.sub{color:var(--mute);font-size:14px;margin:0}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;border:1px solid var(--line);color:var(--ice)}
+.tag.est{border-color:var(--gold);color:var(--gold)}
+.tag.cand{border-color:var(--cyan);color:var(--cyan)}
+.idx{display:flex;align-items:baseline;gap:8px}
+.idx b{font-size:30px;color:var(--gold)}
+.idx small{color:var(--mute)}
+.meter{height:8px;background:var(--bg);border-radius:6px;overflow:hidden;min-width:60px}
+.meter i{display:block;height:100%;background:var(--cyan)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin-top:14px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{padding:10px;border-bottom:1px solid var(--line);text-align:center}
+th{background:var(--panel);color:var(--ice);font-weight:600;font-size:13px}
+td:first-child,th:first-child{text-align:left;position:sticky;left:0;background:var(--panel2);z-index:1}
+th:first-child{background:var(--panel)}
+tr:last-child td{border-bottom:0}
+.name{background:none;border:0;color:var(--cyan);text-align:left;padding:0;min-height:0;cursor:pointer;font-weight:600;text-decoration:underline}
+.sc{display:inline-block;min-width:30px;border-radius:8px;padding:2px 0;font-weight:700;color:#0a1428}
+.s1{background:#5b7ba6}.s2{background:#6f93b3}.s3{background:#7fb4c0}.s4{background:#53c6d3}.s5{background:#22c3d6}
+dialog{width:min(560px,calc(100% - 24px));max-height:90vh;background:var(--panel);color:var(--text);border:1px solid var(--cyan);border-radius:16px;padding:18px;overflow:auto}
+dialog::backdrop{background:rgba(3,8,20,.8)}
+.dh{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.row{display:grid;grid-template-columns:1fr 36px;gap:10px;align-items:center;margin:6px 0;font-size:14px}
+.row .meter{grid-column:1/2}
+.formula{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--gold);font-size:15px;word-break:break-word}
+ul,ol{margin:0 0 10px;padding-left:22px;color:var(--ice)}
+li{margin-bottom:6px}
+.two{display:grid;gap:12px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+footer{padding-top:26px;padding-bottom:40px;color:var(--mute);font-size:13px}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr 1fr}}
+@media(min-width:960px){.grid{grid-template-columns:repeat(4,1fr)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Space Apps Challenge prototype</div>
+  <h1>NOVA SPOT<span>Earth Analog Screening Explorer</span></h1>
+  <p>Explore and compare eight terrestrial environments as <b>partial</b> analogs for lunar and Martian field research.</p>
+  <div class="notice"><b>Preliminary.</b> All scores are qualitative desk-screening estimates. They are not measurements, validated similarity coefficients, or mission-site recommendations. No NASA satellite data is integrated in this prototype.</div>
+</header>
+<main>
+  <section aria-labelledby="explore">
+    <h2 id="explore">Candidate environments</h2>
+    <div class="bar">
+      <div class="chips" role="group" aria-label="Relevance filter">
+        <button class="chip" data-body="all" aria-pressed="true">All</button>
+        <button class="chip" data-body="moon" aria-pressed="false">Moon relevance</button>
+        <button class="chip" data-body="mars" aria-pressed="false">Mars relevance</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="strong"> Strong relevance only</label>
+      <label class="chk">Sort
+        <select id="sort" aria-label="Sort candidates">
+          <option value="idx">Screening index (high to low)</option>
+          <option value="n">Name (A to Z)</option>
+          <option value="s0">Terrain similarity</option>
+          <option value="s1">Geological relevance</option>
+          <option value="s2">Environmental harshness</option>
+          <option value="s3">Field-testing value</option>
+        </select>
+      </label>
+      <span class="grow"></span>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section aria-labelledby="matrix">
+    <h2 id="matrix">Comparison matrix</h2>
+    <p>Scores run from 1 (low) to 5 (high). Select a site name to open its profile. Current filter and sort apply.</p>
+    <div class="tw"><table id="tbl"></table></div>
+    <p style="margin-top:12px"><button class="btn" id="exp">Export CSV</button></p>
+  </section>
+
+  <section aria-labelledby="method">
+    <h2 id="method">Screening framework</h2>
+    <div class="formula">
+      <p><b>Preliminary Screening Index</b> = <code>(S1 + S2 + S3 + S4) / 20 × 100</code></p>
+      <p style="margin:0">S1 Terrain similarity · S2 Geological relevance · S3 Environmental harshness · S4 Field-testing value. Each is scored 1 to 5, so the index ranges from 20 to 100. A higher index means more favorable on these four qualitative dimensions, not a validated match to the Moon or Mars.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="lim">
+    <h2 id="lim">Scientific limitations and future development</h2>
+    <div class="two">
+      <div class="box">
+        <h3>Current limitations</h3>
+        <ul>
+          <li>Scores are preliminary qualitative judgments, not measured values.</li>
+          <li>NASA satellite-derived measurements have not been integrated.</li>
+          <li>Earth cannot reproduce lunar vacuum, low gravity and radiation, or the full Martian environment. Every site is a partial analog.</li>
+          <li>Relevance labels and the established/candidate status are preliminary and need checking against analog-site literature.</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Next development stages</h3>
+        <ol>
+          <li>Integrate documented NASA Earth-observation datasets.</li>
+          <li>Add relevant lunar and Martian reference datasets.</li>
+          <li>Define measurable indicators.</li>
+          <li>Normalize data with reproducible methods.</li>
+          <li>Review analog-site literature to assess candidate novelty.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>
+  <p>NOVA SPOT is an independent prototype built with HTML, CSS and JavaScript. It is not affiliated with or endorsed by NASA. Generative AI assisted with drafting and code generation.</p>
+</footer>
+
+<dialog id="dlg" aria-labelledby="dt"><div id="dc"></div></dialog>
+
+<script>
+"use strict";
+// Preliminary qualitative desk-screening estimates. m/k = Moon/Mars relevance (0 limited, 1 partial, 2 strong).
+// s = [Terrain similarity, Geological relevance, Environmental harshness, Field-testing value], each 1-5.
+const DIMS = ["Terrain similarity", "Geological relevance", "Environmental harshness", "Field-testing value"];
+const LV = ["Limited", "Partial", "Strong"];
+const D = [
+ {n:"Danakil Depression", r:"Afar region, Ethiopia", c:"Hot hyper-arid volcanic basin", m:0, k:2, s:[3,4,5,2], e:0,
+  a:"A low-lying, hot, hyper-arid volcanic basin with salt flats and hydrothermal features.",
+  w:"Its salt, volcanic and hydrothermal terrain may offer partial analogy for some Martian surface processes.",
+  v:"Extreme heat makes testing difficult, and access and security logistics need careful assessment. Lunar relevance is limited."},
+ {n:"McMurdo Dry Valleys", r:"Antarctica", c:"Cold polar desert", m:0, k:2, s:[4,4,5,3], e:1,
+  a:"Cold, hyperarid, largely ice-free valleys with permafrost and patterned ground.",
+  w:"Cold-desert conditions may offer partial analogy for some Martian polar and permafrost settings.",
+  v:"Remote and logistically demanding, with strict environmental protections. Lunar relevance is limited."},
+ {n:"Icelandic Volcanic Highlands", r:"Iceland", c:"Basaltic volcanic terrain", m:1, k:2, s:[4,4,3,4], e:0,
+  a:"Basaltic highlands with lava fields, volcanic ash plains and glacial influence.",
+  w:"Basaltic terrain may offer partial analogy for volcanic surfaces on both bodies and is relatively accessible for instrument and mobility trials.",
+  v:"Wet, partly vegetated and glaciated in places, unlike dry Moon and Mars surfaces."},
+ {n:"Haughton Crater", r:"Devon Island, Canada", c:"Impact crater, polar desert", m:2, k:2, s:[4,5,4,4], e:1,
+  a:"An impact structure in the Canadian Arctic within a polar desert setting.",
+  w:"Impact geology and cold-desert context are relevant to both bodies, and the site has hosted analog research programs.",
+  v:"Short field season and remote access. Arctic conditions differ from lunar vacuum and the Martian atmosphere."},
+ {n:"Lanzarote Volcanic Fields", r:"Canary Islands, Spain", c:"Basaltic volcanic fields", m:1, k:1, s:[3,3,2,4], e:0,
+  a:"Volcanic fields with basaltic lava flows and cones.",
+  w:"Accessible basaltic terrain suited to early testing of field methods and equipment.",
+  v:"A mild maritime setting offers little environmental harshness, and some areas are protected."},
+ {n:"Svalbard Periglacial Terrain", r:"Svalbard, Norway", c:"Periglacial cold terrain", m:0, k:1, s:[3,3,4,3], e:0,
+  a:"Arctic archipelago terrain with permafrost, frost-shaped ground and periglacial landforms.",
+  w:"Periglacial processes may offer partial analogy for some Martian cold-climate landforms.",
+  v:"Strongly shaped by polar climate and ice. Lunar relevance is limited."},
+ {n:"Mauna Loa Volcanic Slopes", r:"Hawaii, USA", c:"Basaltic shield volcano", m:2, k:1, s:[4,3,3,5], e:1,
+  a:"A large basaltic shield volcano with extensive lava surfaces.",
+  w:"Basaltic lava terrain that has hosted analog habitat research, useful for mobility and operations trials.",
+  v:"Tropical ocean setting and lower-elevation vegetation differ from the Moon and Mars. Access restrictions may apply."},
+ {n:"Namib Desert", r:"Namibia", c:"Hot coastal hyperarid desert", m:0, k:1, s:[3,2,4,3], e:0,
+  a:"A coastal hyperarid desert in southwestern Africa with extensive dune fields.",
+  w:"Wind-shaped dune landforms and extreme aridity may offer partial analogy for some Martian terrain.",
+  v:"Hot sandy desert unlike cold, airless lunar surfaces. Lunar relevance is limited."}
+];
+const index = s => Math.round((s[0] + s[1] + s[2] + s[3]) / 20 * 100);
+D.forEach(d => d.i = index(d.s));
+const st = {body: "all", strong: false, sort: "idx"};
+const $ = id => document.getElementById(id);
+
+function view() {
+  let r = D.filter(d => {
+    const lv = st.body === "moon" ? d.m : st.body === "mars" ? d.k : 3;
+    return st.body === "all" ? true : (st.strong ? lv === 2 : lv >= 1);
+  });
+  if (st.body === "all" && st.strong) r = r.filter(d => d.m === 2 || d.k === 2);
+  const key = st.sort;
+  r.sort((a, b) => key === "n" ? a.n.localeCompare(b.n) : key === "idx" ? b.i - a.i || a.n.localeCompare(b.n)
+    : b.s[+key.slice(1)] - a.s[+key.slice(1)] || b.i - a.i);
+  return r;
+}
+const tag = d => `<span class="tag ${d.e ? "est" : "cand"}">${d.e ? "Established analog site" : "Candidate"}</span>`;
+const rel = d => `<span class="tag">Moon: ${LV[d.m]}</span><span class="tag">Mars: ${LV[d.k]}</span>`;
+
+function render() {
+  const r = view();
+  $("count").textContent = r.length + " of " + D.length + " shown";
+  $("exp").textContent = "Export CSV (" + r.length + ")";
+  $("grid").innerHTML = r.length ? r.map(d => `<article class="card"><h3>${d.n}</h3>
+    <p class="sub">${d.r}<br>${d.c}</p><div class="tags">${tag(d)}${rel(d)}</div>
+    <div class="idx"><b>${d.i}</b><small>preliminary index</small></div>
+    <div class="meter" aria-hidden="true"><i style="width:${d.i}%"></i></div>
+    <button class="btn ghost" data-open="${D.indexOf(d)}">View profile</button></article>`).join("")
+    : '<p class="sub">No candidates match the current filter.</p>';
+  $("tbl").innerHTML = "<thead><tr><th>Site</th><th>Moon</th><th>Mars</th>" + DIMS.map((x, i) => `<th>S${i + 1}<br>${x}</th>`).join("")
+    + "<th>Index</th></tr></thead><tbody>" + r.map(d => `<tr><td><button class="name" data-open="${D.indexOf(d)}">${d.n}</button></td>
+    <td>${LV[d.m]}</td><td>${LV[d.k]}</td>${d.s.map(v => `<td><span class="sc s${v}">${v}</span></td>`).join("")}<td><b>${d.i}</b></td></tr>`).join("") + "</tbody>";
+}
+
+function openProfile(i) {
+  const d = D[i];
+  $("dc").innerHTML = `<div class="dh"><div><h2 id="dt" style="margin:0">${d.n}</h2><p class="sub">${d.r} · ${d.c}</p></div>
+    <button class="btn ghost" id="x" aria-label="Close profile">Close</button></div>
+    <div class="tags" style="margin:10px 0">${tag(d)}${rel(d)}</div>
+    <p>${d.a}</p><h3>Why it is considered</h3><p>${d.w}</p><h3>Caveats</h3><p>${d.v}</p>
+    <h3>Preliminary qualitative scores</h3>
+    ${d.s.map((v, j) => `<div class="row"><span>S${j + 1} ${DIMS[j]}</span><span class="sc s${v}">${v}</span>
+    <div class="meter" aria-hidden="true"><i style="width:${v * 20}%"></i></div></div>`).join("")}
+    <p style="margin-top:10px"><b>Preliminary Screening Index: ${d.i}</b> = (${d.s.join(" + ")}) / 20 × 100</p>
+    <p class="sub">Qualitative desk-screening estimate. Not a measurement, and this environment is a partial analog only. Status and relevance labels are preliminary.</p>`;
+  $("dlg").showModal();
+  $("x").onclick = () => $("dlg").close();
+}
+
+const q = v => '"' + String(v).replace(/"/g, '""') + '"';
+function toCSV(rows) {
+  const head = ["Site", "Region", "Category", "Status", "Moon relevance", "Mars relevance", "S1 Terrain similarity", "S2 Geological relevance",
+    "S3 Environmental harshness", "S4 Field-testing value", "Preliminary Screening Index", "Note"];
+  const note = "Preliminary qualitative desk-screening estimate; not a measurement; no NASA satellite data integrated";
+  return [head].concat(rows.map(d => [d.n, d.r, d.c, d.e ? "Established analog site" : "Candidate", LV[d.m], LV[d.k], ...d.s, d.i, note]))
+    .map(l => l.map(q).join(",")).join("\r\n");
+}
+function download() {
+  const blob = new Blob(["\uFEFF" + toCSV(view())], {type: "text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "nova-spot-candidates.csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+document.addEventListener("click", e => {
+  const o = e.target.closest("[data-open]");
+  if (o) return openProfile(+o.dataset.open);
+  const c = e.target.closest("[data-body]");
+  if (c) {
+    st.body = c.dataset.body;
+    document.querySelectorAll("[data-body]").forEach(b => b.setAttribute("aria-pressed", String(b === c)));
+    render();
+  }
+  if (e.target === $("dlg")) $("dlg").close();
+});
+$("strong").addEventListener("change", e => { st.strong = e.target.checked; render(); });
+$("sort").addEventListener("change", e => { st.sort = e.target.value; render(); });
+$("exp").addEventListener("click", download);
+render();
+</script>
+</body>
+</html>
